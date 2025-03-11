@@ -1,0 +1,487 @@
+openapi: 3.0.3
+info:
+  title: API de Cine - OpenAPI 3.0
+  description: |-
+    Este es un servidor de ejemplo para un sistema de cine basado en la especificación OpenAPI 3.0.
+    Puedes encontrar más información sobre OpenAPI en [https://swagger.io](https://swagger.io).
+
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.11
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: https://cine.swagger.io/api/v3
+
+## Declaracion de tags
+tags:
+  - name: sesiones
+    description: Sesiones del cine
+    externalDocs:
+      description: Más información
+      url: http://swagger.io
+
+  - name: peliculas
+    description: Peliculas del cine
+    externalDocs:
+      description: Más información
+      url: http://swagger.io
+
+
+## Paths / Rutas
+paths:
+
+  /sesiones:
+    get:
+      tags:
+        - sesiones
+      summary: Informacion sobre sesiones
+      description: Retorna una lista de sesiones
+      operationId: getSessions
+      responses:
+        '200':
+          description: Operación realizada con éxito
+          content:
+            application/json:
+              schema:
+                type: array # Array de objectos Sesion
+                items:
+                  $ref: '#/components/schemas/Sesion'
+            application/xml:
+              schema:
+                type: array # Array de objectos Sesion
+                items:  # Importante esta propiedad items para arrays
+                  $ref: '#/components/schemas/Sesion'
+        '400':
+          description: Parametro(s) invalido(s)
+      security:
+        - api_key: []
+        - cine_auth:
+            - write:sesiones
+            - read:sesiones
+    post:
+      tags:
+        - sesiones
+      summary: Crea una sesión
+      description: Crea una nueva sesión de cine
+      operationId: createSession
+      requestBody:
+        description: Crea una nueva sesión de cine
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Sesion'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Sesion'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Sesion'
+        required: true
+      responses:
+        '201':
+          description: Sesión creada con exito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sesion'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Sesion'
+        '400':
+          description: Input (body) incorrecto
+        '401':
+          description: Usuario no identificado
+        '403':
+          description: Usuario no autorizado
+      security:
+        - cine_auth:
+            - write:sesiones
+            - read:sesiones
+
+  /sesiones/{idSesion}:
+    # Parametro de esta ruta
+    parameters:
+      - name: idSesion
+        in: path
+        description: ID de la sesión a retornar
+        required: true
+        schema:
+          type: integer
+          format: int64
+
+    # Recupera por Id
+    get:
+      tags:
+        - sesiones
+      summary: Encontrar sesión por Id
+      description: Retorna una unica sesion
+      operationId: getSessionById
+      responses:
+        '200':
+          description: Sesión encontrada con exito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sesion'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Sesion'
+        '404':
+          description: Sesion no encontrada / id invalido
+      security:
+        - api_key: []
+        - cine_auth:
+            - write:sesiones
+            - read:sesiones
+
+    # Actualiza por id
+    put:
+      tags:
+        - sesiones
+      summary: Actualiza una sesion existente
+      description: Actualiza una sesion existente por Id
+      operationId: updateSession
+      requestBody:
+        description: Actualiza una sesion de cine existente
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Sesion'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Sesion'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Sesion'
+        required: true
+      responses:
+        '200':
+          description: Sesión actualizada con exito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sesion'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Sesion'
+        '400':
+          description: Input (body) incorrecto
+        '401':
+          description: Usuario no identificado
+        '403':
+          description: Usuario no autorizado
+        '404':
+          description: Sesion no encontrada / id invalido
+      security:
+        - cine_auth:
+            - write:sesiones
+            - read:sesiones
+
+    # Borra por ID
+    delete:
+      tags:
+        - sesiones
+      summary: Borra una sesión por ID
+      description: Borra una sesión
+      operationId: deleteSession
+      parameters:
+        - name: api_key
+          in: header
+          description: ''
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Sesión borrada con exito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sesion'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Sesion'
+        '400':
+          description: Input (body) incorrecto
+        '401':
+          description: Usuario no identificado
+        '403':
+          description: Usuario no autorizado
+        '404':
+          description: Sesion no encontrada (id invalido)
+      security:
+        - cine_auth:
+            - write:sesiones
+            - read:sesiones
+
+
+  ## Peliculas
+  /peliculas:
+    get:
+      tags:
+        - peliculas
+      summary: Informacion sobre peliculas
+      description: Retorna una lista de peliculas
+      operationId: getMovies
+      responses:
+        '200':
+          description: Operación realizada con éxito
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Pelicula'
+                additionalProperties:
+                  type: integer
+                  format: int32
+      security:
+        - api_key: []
+
+    post:
+      tags:
+        - peliculas
+      summary: Crea una pelicula
+      description: Crea una nueva pelicula
+      operationId: createMovie
+      requestBody:
+        description: Crea una nueva pelicula
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pelicula'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Pelicula'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Pelicula'
+        required: true
+      responses:
+        '201':
+          description: Pelicula creada con exito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sesion'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Sesion'
+        '400':
+          description: Input (body) incorrecto
+        '401':
+          description: Usuario no identificado
+        '403':
+          description: Usuario no autorizado
+      security:
+        - api_key: []
+
+## Resto de rutas, mismo concepto que en sesiones pero para peliculas, para el
+## ejercicio las que tenemos son suficientes ;)
+
+
+# Seccion Componentes
+components:
+
+  # SCHEMAS
+  schemas:
+
+    Sesion:
+      type: object
+      required:
+        - pelicula
+        - sala
+        - asientos
+        - horario
+        - precios
+        - estado
+        - formato
+        - idioma
+      properties:
+        id:
+          type: string
+        pelicula:
+          type: object
+          required:
+            - id
+            - titulo
+            - duracion
+          properties:
+            id:
+              type: integer
+              format: int64
+            titulo:
+              type: string
+            duracion:
+              type: number
+              minimum: 25
+              maximum: 643
+        sala:
+          type: object
+          properties:
+            id:
+              type: string
+            numero:
+              type: integer
+            capacidad:
+              type: integer
+              minimum: 1
+              maximum: 500
+        asientos:
+          type: object
+          required:
+            - total
+            - disponibles
+            - ocupados
+          properties:
+            total:
+              type: integer
+              minimum: 1
+              maximum: 500
+            disponibles:
+              type: integer
+              minimum: 0
+              maximum: 500
+            ocupados:
+              type: integer
+              minimum: 0
+              maximum: 500
+        horario:
+          type: object
+          required:
+            - fecha
+            - hora_inicio
+            - hora_fin
+          properties:
+            fecha:
+              type: string
+              format: date
+            hora_inicio:
+              type: string
+            hora_fin:
+              type: string
+        precios:
+          type: object
+          required:
+            - general
+            - reducido
+          properties:
+            general:
+              type: number
+              minimum: 1.00
+              maximum: 250.00
+            reducido:
+              type: number
+              minimum: 1.00
+              maximum: 250.00
+        estado:
+          type: boolean
+        formato:
+          type: string
+          enum: ["2D", "3D"]
+        idioma:
+          type: string
+        subtitulos:
+          type: string
+          enum: ["Si", "No"]
+      xml:
+        name: sesion
+
+    Pelicula:
+      type: object
+      required:
+        - titulo
+      properties:
+        id:
+          type: integer
+          format: int64
+        titulo:
+          type: string
+        descripcion:
+          type: string
+        directores:
+          type: array
+          items:
+            type: string
+        duracion:
+          type: integer
+          minimum: 1
+          maximum: 643
+        genero:
+          type: string
+          enum: [
+            "Acción",
+            "Aventura",
+            "Animación",
+            "Ciencia Ficción",
+            "Comedia",
+            "Drama",
+            "Romance",
+            "Terror"
+          ]
+        año:
+          type: integer
+          minimum: 1888
+          maximum: 2100
+        actores:
+          type: array
+          items:
+            type: string
+      xml:
+        name: pelicula
+
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+        message:
+          type: string
+      xml:
+        name: '##default'
+
+  ## Request bodies
+  requestBodies:
+
+    Sesion:
+      description: Objeto que representa una sesion de cine
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Sesion'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Sesion'
+
+    SesionArray:
+      description: Lista de objetos Sesion
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Sesion'
+
+  ## Seguridad / scope
+  securitySchemes:
+    cine_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://cine.swagger.io/oauth/authorize
+          scopes:
+            write:sesiones: Modifica sesiones desde tu cuenta
+            read:sesiones: Lee tus sesiones
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
