@@ -1,1 +1,6 @@
 *.yaml linguist-detectable=true
+*.yaml linguist-vendored=false
+*.yaml linguist-generated=false
+*.yaml linguist-documentation=false
+*.yaml linguist-detectable=true
+*.yaml linguist-language=YAML
